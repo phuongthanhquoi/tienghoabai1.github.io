@@ -20,6 +20,24 @@ body {
     background: #2c3e50;
     color: white;
     min-height: 100vh;
+    transition: all 0.3s ease;
+}
+
+/* ẩn sidebar */
+.sidebar.hide-menu {
+    display: none !important;
+}
+
+/* content */
+.content-area {
+    min-height: 100vh;
+}
+
+/* khi menu ẩn thì content chiếm hết màn hình */
+.content-full {
+    width: 100% !important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
 }
 
 .menu-parent {
@@ -64,20 +82,26 @@ body {
     transform: rotate(90deg);
 }
 
-.content-area {
-    min-height: 100vh;
+/* nút menu */
+#menuBtn {
+    z-index: 9999;
 }
 </style>
 </head>
 
 <body>
 
+<!-- nút ẩn / hiện menu -->
+<button class="btn btn-primary position-fixed top-0 start-0 m-2" id="menuBtn">
+    ☰ Menu
+</button>
+
 <div class="container-fluid">
     <div class="row">
 
         <!-- Sidebar -->
-        <div class="col-md-3 col-lg-2 sidebar p-0 d-none d-md-block" id="sidebar">
-            <h4 class="text-center py-3">📚 Học Tiếng Hoa</h4>
+        <div class="col-md-3 col-lg-2 sidebar p-0" id="sidebar">
+            <h4 class="text-center py-3 mt-5">📚 Học Tiếng Hoa</h4>
 
             <div class="menu-parent d-flex justify-content-between">
                 <span>📖 Bài 1</span>
@@ -101,7 +125,7 @@ body {
                 <div class="menu-item" data-page="bai2/listen.html">Luyện nghe</div>
             </div>
 
-           <!-- Menu cha -->
+            <!-- Menu cha -->
             <div class="menu-parent d-flex justify-content-between">
                 <span>🔢 Số đếm</span>
                 <span class="arrow">▶</span>
@@ -152,7 +176,7 @@ body {
         </div>
 
         <!-- Content -->
-        <div class="col-md-9 col-lg-10 content-area d-flex justify-content-center align-items-center p-3">
+        <div class="col-md-9 col-lg-10 content-area d-flex justify-content-center align-items-center p-3" id="mainContent">
             <div class="w-100" style="max-width:700px;" id="content">
                 <div class="text-center text-muted">Chọn bài học bên trái</div>
             </div>
@@ -161,17 +185,12 @@ body {
     </div>
 </div>
 
-<!-- nút mở menu mobile -->
-<button class="btn btn-primary d-md-none position-fixed top-0 start-0 m-2" id="menuBtn">
-    ☰
-</button>
-
 <script>
 $(document).ready(function(){
 
     // mở / đóng menu cha - hỗ trợ nhiều cấp
     $(".menu-parent").click(function(e){
-        e.stopPropagation(); // 🛑 chặn lan lên
+        e.stopPropagation();
 
         let submenu = $(this).next(".submenu");
 
@@ -185,7 +204,7 @@ $(document).ready(function(){
 
     // chọn item
     $(".menu-item").click(function(e){
-        e.stopPropagation(); // 🛑 tránh đóng menu
+        e.stopPropagation();
 
         $(".menu-item").removeClass("active");
         $(this).addClass("active");
@@ -193,25 +212,42 @@ $(document).ready(function(){
         let page = $(this).data("page");
         loadPage(page);
 
-        // mobile thì ẩn menu
-        if ($(window).width() < 768) {
-            $("#sidebar").addClass("d-none");
-        }
+        // chọn xong thì tự ẩn menu
+        hideMenu();
     });
 
-    // nút mở menu mobile
+    // nút ẩn / hiện menu
     $("#menuBtn").click(function(){
-        $("#sidebar").toggleClass("d-none");
+        toggleMenu();
     });
 
 });
+
+// ẩn / hiện menu
+function toggleMenu() {
+    $("#sidebar").toggleClass("hide-menu");
+    $("#mainContent").toggleClass("content-full");
+
+    if ($("#sidebar").hasClass("hide-menu")) {
+        $("#menuBtn").text("☰ Menu");
+    } else {
+        $("#menuBtn").text("✖ Đóng");
+    }
+}
+
+// ẩn menu
+function hideMenu() {
+    $("#sidebar").addClass("hide-menu");
+    $("#mainContent").addClass("content-full");
+    $("#menuBtn").text("☰ Menu");
+}
 
 // load page
 function loadPage(page) {
     $.get(page, function(data){
         $("#content").html(data);
 
-        // chạy lại script
+        // chạy lại script trong trang con
         $("#content script").each(function(){
             $.globalEval(this.text || this.textContent || this.innerHTML || '');
         });
