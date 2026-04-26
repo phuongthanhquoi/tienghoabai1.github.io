@@ -1,0 +1,130 @@
+<div class="page">
+
+<h5>👉Đọc tiếng Hoa trong 3 giây. Sau đó đáp án hiện ra và chuyển từ.</h5>
+
+<div class="card" id="card">
+    Bấm bắt đầu
+</div>
+
+<br>
+<button class="btn" id="startBtn">Bắt đầu</button>
+<button class="btn" id="resetBtn">Reset</button>
+
+</div>
+
+<style>
+.page {
+    text-align: center;
+}
+
+.card {
+    width: 320px;
+    height: 180px;
+    margin: auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.pinyin {
+    font-size: 18px;
+    color: #555;
+}
+
+.btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: none;
+    background: #4CAF50;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+</style>
+
+<script>
+(function(){
+
+let words = [
+    { hanzi: "你", pinyin: "nǐ", meaning: "bạn" },
+    { hanzi: "好", pinyin: "hǎo", meaning: "tốt / khỏe" },
+    { hanzi: "身体", pinyin: "shēn tǐ", meaning: "cơ thể / sức khỏe" },
+    { hanzi: "吗", pinyin: "ma", meaning: "trợ từ nghi vấn" },
+    { hanzi: "很", pinyin: "hěn", meaning: "rất" },
+    { hanzi: "谢谢", pinyin: "xiè xie", meaning: "cảm ơn" },
+    { hanzi: "好久", pinyin: "hǎo jiǔ", meaning: "lâu" },
+    { hanzi: "不", pinyin: "bù", meaning: "không" },
+    { hanzi: "见", pinyin: "jiàn", meaning: "gặp" },
+    { hanzi: "也", pinyin: "yě", meaning: "cũng" },
+    { hanzi: "呢", pinyin: "ne", meaning: "trợ từ" },
+    { hanzi: "您", pinyin: "nín", meaning: "ông / bà / ngài" },
+    { hanzi: "学生", pinyin: "xué shēng", meaning: "học sinh" },
+    { hanzi: "我", pinyin: "wǒ", meaning: "tôi" },
+    { hanzi: "是", pinyin: "shì", meaning: "là" },
+    { hanzi: "老师", pinyin: "lǎo shī", meaning: "giáo viên" },
+    { hanzi: "对不起", pinyin: "duì bù qǐ", meaning: "xin lỗi" },
+    { hanzi: "再见", pinyin: "zài jiàn", meaning: "tạm biệt" }
+];
+
+let shuffled = [];
+let index = 0;
+let timer;
+
+function shuffleArray(arr) {
+    return arr.sort(() => Math.random() - 0.5);
+}
+
+function start() {
+    shuffled = shuffleArray([...words]);
+    index = 0;
+    nextWord();
+}
+
+function nextWord() {
+    if (index >= shuffled.length) {
+        $("#card").html("Hết 18 từ!");
+        return;
+    }
+
+    let current = shuffled[index];
+
+    // hiện nghĩa trước
+    $("#card").html(`<div>${current.meaning}</div>`);
+
+    clearTimeout(timer);
+
+    // sau 3s hiện đáp án
+    timer = setTimeout(() => {
+        $("#card").html(`
+            <div>${current.meaning}</div>
+            <div>${current.hanzi}</div>
+            <div class="pinyin">${current.pinyin}</div>
+        `);
+
+        // sau 1s chuyển từ (KHÔNG alert nữa)
+        timer = setTimeout(() => {
+            index++;
+            nextWord();
+        }, 8000);
+
+    }, 3000);
+}
+
+function reset() {
+    clearTimeout(timer);
+    shuffled = [];
+    index = 0;
+    $("#card").text("Bấm bắt đầu");
+}
+
+// gán sự kiện
+$("#startBtn").off("click").on("click", start);
+$("#resetBtn").off("click").on("click", reset);
+
+})();
+</script>

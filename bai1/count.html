@@ -1,0 +1,121 @@
+<div class="page">
+
+<h2>Luyện đọc số (0 → 10)</h2>
+
+<div class="card" id="card">
+    Bấm bắt đầu
+</div>
+
+<br>
+<button class="btn" id="startBtn">Bắt đầu</button>
+<button class="btn" id="resetBtn">Reset</button>
+
+</div>
+
+<style>
+.page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    text-align: center;
+}
+
+.card {
+    width: 320px;
+    height: 180px;
+    margin: auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+}
+
+.pinyin {
+    font-size: 20px;
+    color: #555;
+    margin-top: 10px;
+}
+
+.btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: none;
+    background: #4CAF50;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+</style>
+
+<script>
+let numbers = [
+    { hanzi: "零", pinyin: "líng" },
+    { hanzi: "一", pinyin: "yī" },
+    { hanzi: "二", pinyin: "èr" },
+    { hanzi: "三", pinyin: "sān" },
+    { hanzi: "四", pinyin: "sì" },
+    { hanzi: "五", pinyin: "wǔ" },
+    { hanzi: "六", pinyin: "liù" },
+    { hanzi: "七", pinyin: "qī" },
+    { hanzi: "八", pinyin: "bā" },
+    { hanzi: "九", pinyin: "jiǔ" },
+    { hanzi: "十", pinyin: "shí" }
+];
+
+let index = 0;
+let timer;
+
+// bắt đầu
+function start() {
+    index = 0;
+    nextNumber();
+}
+
+// hiển thị
+function nextNumber() {
+    if (index >= numbers.length) {
+        document.getElementById("card").innerText = "Hết!";
+        return;
+    }
+
+    let current = numbers[index];
+
+    // hiện chữ Hoa
+    document.getElementById("card").innerHTML = `<div>${current.hanzi}</div>`;
+
+    clearTimeout(timer);
+
+    // sau 3 giây hiện pinyin
+    timer = setTimeout(() => {
+        document.getElementById("card").innerHTML = `
+            <div>${current.hanzi}</div>
+            <div class="pinyin">${current.pinyin}</div>
+        `;
+
+        setTimeout(() => {
+            index++;
+            nextNumber();
+        }, 1000);
+
+    }, 3000);
+}
+
+// reset
+function reset() {
+    clearTimeout(timer);
+    index = 0;
+    document.getElementById("card").innerText = "Bấm bắt đầu";
+}
+
+// gán sự kiện
+setTimeout(() => {
+    document.getElementById("startBtn").onclick = start;
+    document.getElementById("resetBtn").onclick = reset;
+}, 0);
+</script>

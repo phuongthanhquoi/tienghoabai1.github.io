@@ -1,0 +1,123 @@
+<div class="page">
+
+<h5>👉Hãy đọc Pinyin trong 3 giây. Sau đó đáp án sẽ hiện ra và tự chuyển sang từ tiếp theo.</h5>
+
+<div class="card" id="card">
+    Bấm bắt đầu
+</div>
+
+<br>
+<button class="btn" id="startBtn">Bắt đầu</button>
+<button class="btn" id="resetBtn">Reset</button>
+
+</div>
+
+<style>
+.page {
+    text-align: center;
+}
+
+.card {
+    width: 300px;
+    height: 150px;
+    margin: auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: none;
+    background: #4CAF50;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+</style>
+
+<script>
+let words = [
+    { hanzi: "你", pinyin: "nǐ" },
+    { hanzi: "好", pinyin: "hǎo" },
+    { hanzi: "身体", pinyin: "shēn tǐ" },
+    { hanzi: "吗", pinyin: "ma" },
+    { hanzi: "很", pinyin: "hěn" },
+    { hanzi: "谢谢", pinyin: "xiè xie" },
+    { hanzi: "好久", pinyin: "hǎo jiǔ" },
+    { hanzi: "不", pinyin: "bù" },
+    { hanzi: "见", pinyin: "jiàn" },
+    { hanzi: "也", pinyin: "yě" },
+    { hanzi: "呢", pinyin: "ne" },
+    { hanzi: "您", pinyin: "nín" },
+    { hanzi: "学生", pinyin: "xué shēng" },
+    { hanzi: "我", pinyin: "wǒ" },
+    { hanzi: "是", pinyin: "shì" },
+    { hanzi: "老师", pinyin: "lǎo shī" },
+    { hanzi: "对不起", pinyin: "duì bù qǐ" },
+    { hanzi: "再见", pinyin: "zài jiàn" }
+];
+
+let shuffled = [];
+let index = 0;
+let timer;
+
+function shuffleArray(arr) {
+    return arr.sort(() => Math.random() - 0.5);
+}
+
+function start() {
+    shuffled = shuffleArray([...words]);
+    index = 0;
+    nextWord();
+}
+
+function nextWord() {
+    if (index >= shuffled.length) {
+        document.getElementById("card").innerText = "Hết 18 từ!";
+        return;
+    }
+
+    let current = shuffled[index];
+    let card = document.getElementById("card");
+
+    // Hiện chữ Hoa trước
+    card.innerHTML = `<div>${current.hanzi}</div>`;
+
+    clearTimeout(timer);
+
+    timer = setTimeout(() => {
+
+        // Hiện thêm phiên âm bên dưới (KHÔNG xoá chữ Hoa)
+        card.innerHTML = `
+            <div>${current.hanzi}</div>
+            <div style="font-size: 18px; color: gray;">${current.pinyin}</div>
+        `;
+
+        // Sau 5s chuyển từ
+        timer = setTimeout(() => {
+            index++;
+            nextWord();
+        }, 5000);
+
+    }, 3000);
+}
+
+function reset() {
+    clearTimeout(timer);
+    shuffled = [];
+    index = 0;
+    document.getElementById("card").innerText = "Bấm bắt đầu";
+}
+
+// 🔥 bind event (QUAN TRỌNG)
+setTimeout(() => {
+    document.getElementById("startBtn").onclick = start;
+    document.getElementById("resetBtn").onclick = reset;
+}, 0);
+</script>

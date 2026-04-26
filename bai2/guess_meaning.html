@@ -1,0 +1,161 @@
+<div class="page">
+    <h2>Luyện đọc từ vựng Bài 2</h2>
+
+    <div class="card" id="card">
+        Bấm bắt đầu
+    </div>
+
+    <br>
+    <button class="btn" id="startBtn">Bắt đầu</button>
+    <button class="btn" id="resetBtn">Reset</button>
+</div>
+
+<style>
+.page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    text-align: center;
+    font-family: Arial, sans-serif;
+}
+
+.card {
+    width: 360px;
+    min-height: 220px;
+    padding: 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    line-height: 1.5;
+}
+
+.pinyin {
+    font-size: 24px;
+    color: #555;
+    margin-top: 10px;
+}
+
+.meaning {
+    font-size: 20px;
+    color: #222;
+    margin-top: 10px;
+}
+
+.btn {
+    margin: 10px 5px 0;
+    padding: 10px 20px;
+    border: none;
+    background: #4CAF50;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+</style>
+
+<script>
+let words = [
+    { hanzi: "请问", pinyin: "qǐngwèn", meaning: "xin lỗi, cho hỏi" },
+    { hanzi: "贵姓", pinyin: "guìxìng", meaning: "quý tính, họ của ngài" },
+    { hanzi: "姓", pinyin: "xìng", meaning: "họ" },
+    { hanzi: "先生", pinyin: "xiānsheng", meaning: "ông, ngài" },
+    { hanzi: "吧", pinyin: "ba", meaning: "trợ từ nghi vấn" },
+    { hanzi: "叫", pinyin: "jiào", meaning: "kêu, gọi, tên là" },
+    { hanzi: "请", pinyin: "qǐng", meaning: "mời, xin, nhờ..." },
+    { hanzi: "进", pinyin: "jìn", meaning: "vào" },
+    { hanzi: "你们", pinyin: "nǐmen", meaning: "các anh, các bạn, các chị..." },
+    { hanzi: "这", pinyin: "zhè", meaning: "đây, này" },
+    { hanzi: "哥哥", pinyin: "gēge", meaning: "anh trai" },
+    { hanzi: "他", pinyin: "tā", meaning: "anh ấy, ông ấy, nó" },
+    { hanzi: "姐姐", pinyin: "jiějie", meaning: "chị gái" },
+    { hanzi: "她", pinyin: "tā", meaning: "cô ấy, bà ấy, nó" },
+    { hanzi: "欢迎", pinyin: "huānyíng", meaning: "hoan nghênh" },
+    { hanzi: "那", pinyin: "nà", meaning: "kia, ấy, đó" },
+    { hanzi: "谁", pinyin: "shéi", meaning: "ai" },
+    { hanzi: "妹妹", pinyin: "mèimei", meaning: "em gái" },
+    { hanzi: "朋友", pinyin: "péngyou", meaning: "bạn" },
+    { hanzi: "位", pinyin: "wèi", meaning: "vị (lượng từ)" },
+    { hanzi: "什么", pinyin: "shénme", meaning: "gì, cái gì" }
+];
+
+let index = 0;
+let timer1, timer2;
+let isRunning = false;
+
+function start() {
+    clearAllTimers();
+    index = 0;
+    isRunning = true;
+    nextWord();
+}
+
+function nextWord() {
+    if (!isRunning) return;
+
+    if (index >= words.length) {
+        document.getElementById("card").innerHTML = `
+            <div style="font-size:36px;">Hết!</div>
+            <div class="meaning">Bạn đã luyện xong bài này</div>
+        `;
+        return;
+    }
+
+    let current = words[index];
+
+    // Bước 1: hiện chữ Hán
+    document.getElementById("card").innerHTML = `
+        <div>${current.hanzi}</div>
+    `;
+
+    // Bước 2: sau 3 giây hiện pinyin
+    timer1 = setTimeout(() => {
+        document.getElementById("card").innerHTML = `
+            <div>${current.hanzi}</div>
+            <div class="pinyin">${current.pinyin}</div>
+        `;
+
+        // Bước 3: sau 2 giây hiện nghĩa
+        timer2 = setTimeout(() => {
+            document.getElementById("card").innerHTML = `
+                <div>${current.hanzi}</div>
+                <div class="pinyin">${current.pinyin}</div>
+                <div class="meaning">${current.meaning}</div>
+            `;
+
+            // Sang từ tiếp theo sau 2 giây nữa
+            setTimeout(() => {
+                index++;
+                nextWord();
+            }, 2000);
+
+        }, 2000);
+
+    }, 3000);
+}
+
+function reset() {
+    clearAllTimers();
+    index = 0;
+    isRunning = false;
+    document.getElementById("card").innerHTML = `Bấm bắt đầu`;
+}
+
+function clearAllTimers() {
+    clearTimeout(timer1);
+    clearTimeout(timer2);
+}
+
+document.getElementById("startBtn").onclick = start;
+document.getElementById("resetBtn").onclick = reset;
+</script>

@@ -1,0 +1,120 @@
+<div class="page">
+
+<h2>👉 Bạn có 3 giây để đoán nghĩa. Hết thời gian, đáp án sẽ hiện và chuyển sang từ mới.</h2>
+
+<div class="card" id="card">
+    Bấm bắt đầu
+</div>
+
+<br>
+<button class="btn" id="startBtn">Bắt đầu</button>
+<button class="btn" id="resetBtn">Reset</button>
+
+</div>
+
+<style>
+.page {
+    text-align: center;
+}
+
+.card {
+    width: 300px;
+    height: 150px;
+    margin: auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: none;
+    background: #4CAF50;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+</style>
+
+<script>
+(function() {
+
+let words = [
+    { hanzi: "你", meaningVi: "Ông, bà, bạn, anh, chị" },
+    { hanzi: "好", meaningVi: "tốt, khỏe"},
+    { hanzi: "身体", meaningVi: "thân thể, sức khỏe"},
+    { hanzi: "吗", meaningVi: "trợ từ nghi vấn (không)"},
+    { hanzi: "很", meaningVi: "rất"},
+    { hanzi: "谢谢", meaningVi: "cảm ơn"},
+    { hanzi: "好久", meaningVi: "rất lâu"},
+    { hanzi: "不", meaningVi: "không"},
+    { hanzi: "见", meaningVi: "gặp"},
+    { hanzi: "也", meaningVi: "cũng"},
+    { hanzi: "呢", meaningVi: "trợ từ nghi vấn"},
+    { hanzi: "您", meaningVi: "ông, bà, ngài"},
+    { hanzi: "学生", meaningVi: "học sinh"},
+    { hanzi: "我", meaningVi: "tôi"},
+    { hanzi: "是", meaningVi: "là, phải, vâng"},
+    { hanzi: "老师", meaningVi: "thầy giáo, cô giáo"},
+    { hanzi: "对不起", meaningVi: "xin lỗi"},
+    { hanzi: "再见", meaningVi: "tạm biệt"}
+];
+
+let shuffled = [];
+let index = 0;
+let timer;
+
+function shuffleArray(arr) {
+    return arr.sort(() => Math.random() - 0.5);
+}
+
+function start() {
+    shuffled = shuffleArray([...words]);
+    index = 0;
+    nextWord();
+}
+
+function nextWord() {
+    if (index >= shuffled.length) {
+        document.getElementById("card").innerText = "Hết 18 từ!";
+        return;
+    }
+
+    let current = shuffled[index];
+    let card = document.getElementById("card");
+
+    // Hiện chữ Hán trước
+    card.innerText = current.hanzi;
+
+    clearTimeout(timer);
+
+    // Sau 5s hiện nghĩa
+    timer = setTimeout(() => {
+        card.innerText = current.hanzi + "\n" + current.meaningVi;
+
+        // Sau 2s nữa chuyển từ (tổng 7s)
+        timer = setTimeout(() => {
+            index++;
+            nextWord();
+        }, 5000);
+
+    }, 3000);
+}
+
+function reset() {
+    clearTimeout(timer);
+    shuffled = [];
+    index = 0;
+    document.getElementById("card").innerText = "Bấm bắt đầu";
+}
+
+document.getElementById("startBtn").onclick = start;
+document.getElementById("resetBtn").onclick = reset;
+
+})();
+</script>
