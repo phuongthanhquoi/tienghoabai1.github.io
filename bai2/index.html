@@ -65,87 +65,116 @@
 </style>
 
 <script>
-let words = [
-    { pinyin: "qǐngwèn", meaning: "xin lỗi, cho hỏi" },
-    { pinyin: "guìxìng", meaning: "quý tính, họ của ngài" },
-    { pinyin: "xìng", meaning: "họ" },
-    { pinyin: "xiānsheng", meaning: "ông, ngài" },
-    { pinyin: "ba", meaning: "trợ từ nghi vấn" },
-    { pinyin: "jiào", meaning: "kêu, gọi, tên là" },
-    { pinyin: "qǐng", meaning: "mời, xin, nhờ..." },
-    { pinyin: "jìn", meaning: "vào" },
-    { pinyin: "nǐmen", meaning: "các anh, các bạn, các chị..." },
-    { pinyin: "zhè", meaning: "đây, này" },
-    { pinyin: "gēge", meaning: "anh trai" },
-    { pinyin: "tā", meaning: "anh ấy, ông ấy, nó" },
-    { pinyin: "jiějie", meaning: "chị gái" },
-    { pinyin: "tā", meaning: "cô ấy, bà ấy, nó" },
-    { pinyin: "huānyíng", meaning: "hoan nghênh" },
-    { pinyin: "nà", meaning: "kia, ấy, đó" },
-    { pinyin: "shéi", meaning: "ai" },
-    { pinyin: "mèimei", meaning: "em gái" },
-    { pinyin: "péngyou", meaning: "bạn" },
-    { pinyin: "wèi", meaning: "vị (lượng từ)" },
-    { pinyin: "shénme", meaning: "gì, cái gì" }
-];
-
-let index = 0;
-let timer1, timer2;
-let isRunning = false;
-
-function start() {
-    clearAllTimers();
-    index = 0;
-    isRunning = true;
-    nextWord();
-}
-
-function nextWord() {
-    if (!isRunning) return;
-
-    if (index >= words.length) {
-        document.getElementById("card").innerHTML = `
-            <div class="pinyin">Hết!</div>
-            <div class="meaning">Bạn đã hoàn thành</div>
-        `;
-        return;
+(() => {
+    // Nếu đang chạy bài cũ thì dừng timer cũ lại
+    if (window.currentLearningCleanup) {
+        window.currentLearningCleanup();
     }
 
-    let current = words[index];
+    const words = [
+        { pinyin: "qǐngwèn", meaning: "xin lỗi, cho hỏi" },
+        { pinyin: "guìxìng", meaning: "quý tính, họ của ngài" },
+        { pinyin: "xìng", meaning: "họ" },
+        { pinyin: "xiānsheng", meaning: "ông, ngài" },
+        { pinyin: "ba", meaning: "trợ từ nghi vấn" },
+        { pinyin: "jiào", meaning: "kêu, gọi, tên là" },
+        { pinyin: "qǐng", meaning: "mời, xin, nhờ..." },
+        { pinyin: "jìn", meaning: "vào" },
+        { pinyin: "nǐmen", meaning: "các anh, các bạn, các chị..." },
+        { pinyin: "zhè", meaning: "đây, này" },
+        { pinyin: "gēge", meaning: "anh trai" },
+        { pinyin: "tā", meaning: "anh ấy, ông ấy, nó" },
+        { pinyin: "jiějie", meaning: "chị gái" },
+        { pinyin: "tā", meaning: "cô ấy, bà ấy, nó" },
+        { pinyin: "huānyíng", meaning: "hoan nghênh" },
+        { pinyin: "nà", meaning: "kia, ấy, đó" },
+        { pinyin: "shéi", meaning: "ai" },
+        { pinyin: "mèimei", meaning: "em gái" },
+        { pinyin: "péngyou", meaning: "bạn" },
+        { pinyin: "wèi", meaning: "vị (lượng từ)" },
+        { pinyin: "shénme", meaning: "gì, cái gì" }
+    ];
 
-    // Bước 1: chỉ hiện pinyin
-    document.getElementById("card").innerHTML = `
-        <div class="pinyin">${current.pinyin}</div>
-    `;
+    let remainingWords = [];
+    let timer1 = null;
+    let timer2 = null;
+    let isRunning = false;
 
-    // Bước 2: sau 4 giây hiện nghĩa
-    timer1 = setTimeout(() => {
-        document.getElementById("card").innerHTML = `
+    const card = document.getElementById("card");
+    const startBtn = document.getElementById("startBtn");
+    const resetBtn = document.getElementById("resetBtn");
+
+    function start() {
+        clearAllTimers();
+
+        remainingWords = [...words];
+        isRunning = true;
+
+        nextWord();
+    }
+
+    function nextWord() {
+        if (!isRunning) return;
+
+        if (remainingWords.length === 0) {
+            card.innerHTML = `
+                <div class="pinyin">Hết!</div>
+                <div class="meaning">Bạn đã hoàn thành</div>
+            `;
+            isRunning = false;
+            return;
+        }
+
+        const randomIndex = Math.floor(Math.random() * remainingWords.length);
+        const current = remainingWords[randomIndex];
+
+        // Xóa từ đã hiện để không hiện lại nữa
+        remainingWords.splice(randomIndex, 1);
+
+        // Bước 1: chỉ hiện pinyin
+        card.innerHTML = `
             <div class="pinyin">${current.pinyin}</div>
-            <div class="meaning">${current.meaning}</div>
         `;
 
-        // Bước 3: sau 2 giây chuyển sang từ tiếp theo
-        timer2 = setTimeout(() => {
-            index++;
-            nextWord();
-        }, 2000);
+        // Bước 2: sau 4 giây hiện nghĩa
+        timer1 = setTimeout(() => {
+            if (!isRunning) return;
 
-    }, 4000);
-}
+            card.innerHTML = `
+                <div class="pinyin">${current.pinyin}</div>
+                <div class="meaning">${current.meaning}</div>
+            `;
 
-function reset() {
-    clearAllTimers();
-    index = 0;
-    isRunning = false;
-    document.getElementById("card").innerHTML = `Bấm bắt đầu`;
-}
+            // Bước 3: sau 2 giây chuyển sang từ tiếp theo
+            timer2 = setTimeout(() => {
+                if (!isRunning) return;
+                nextWord();
+            }, 2000);
 
-function clearAllTimers() {
-    clearTimeout(timer1);
-    clearTimeout(timer2);
-}
+        }, 4000);
+    }
 
-document.getElementById("startBtn").onclick = start;
-document.getElementById("resetBtn").onclick = reset;
+    function reset() {
+        clearAllTimers();
+
+        remainingWords = [];
+        isRunning = false;
+
+        card.innerHTML = `Bấm bắt đầu`;
+    }
+
+    function clearAllTimers() {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+    }
+
+    startBtn.onclick = start;
+    resetBtn.onclick = reset;
+
+    // Cho trang khác gọi để dọn timer cũ khi đổi menu
+    window.currentLearningCleanup = function () {
+        clearAllTimers();
+        isRunning = false;
+    };
+})();
 </script>

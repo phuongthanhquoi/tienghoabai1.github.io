@@ -1,0 +1,133 @@
+<div class="page">
+
+<h5>👉Đọc tiếng Hoa trong 3 giây. Sau đó đáp án hiện ra và chuyển từ.</h5>
+
+<div class="card" id="card">
+    Bấm bắt đầu
+</div>
+
+<br>
+<button class="btn" id="startBtn">Bắt đầu</button>
+<button class="btn" id="resetBtn">Reset</button>
+
+</div>
+
+<style>
+.page {
+    text-align: center;
+}
+
+.card {
+    width: 320px;
+    height: 180px;
+    margin: auto;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.pinyin {
+    font-size: 18px;
+    color: #555;
+}
+
+.btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: none;
+    background: #4CAF50;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+</style>
+
+<script>
+(function(){
+
+let words = [
+    { hanzi: "请问", pinyin: "qǐngwèn", meaning: "xin lỗi, cho hỏi" },
+    { hanzi: "贵姓", pinyin: "guìxìng", meaning: "quý tính, họ của ngài" },
+    { hanzi: "姓", pinyin: "xìng", meaning: "họ" },
+    { hanzi: "先生", pinyin: "xiānsheng", meaning: "ông, ngài" },
+    { hanzi: "吧", pinyin: "ba", meaning: "trợ từ nghi vấn" },
+    { hanzi: "叫", pinyin: "jiào", meaning: "kêu, gọi, tên là" },
+    { hanzi: "请", pinyin: "qǐng", meaning: "mời, xin, nhờ..." },
+    { hanzi: "进", pinyin: "jìn", meaning: "vào" },
+    { hanzi: "你们", pinyin: "nǐmen", meaning: "các anh, các bạn, các chị..." },
+    { hanzi: "这", pinyin: "zhè", meaning: "đây, này" },
+    { hanzi: "哥哥", pinyin: "gēge", meaning: "anh trai" },
+    { hanzi: "他", pinyin: "tā", meaning: "anh ấy, ông ấy, nó" },
+    { hanzi: "姐姐", pinyin: "jiějie", meaning: "chị gái" },
+    { hanzi: "她", pinyin: "tā", meaning: "cô ấy, bà ấy, nó" },
+    { hanzi: "欢迎", pinyin: "huānyíng", meaning: "hoan nghênh" },
+    { hanzi: "那", pinyin: "nà", meaning: "kia, ấy, đó" },
+    { hanzi: "谁", pinyin: "shéi", meaning: "ai" },
+    { hanzi: "妹妹", pinyin: "mèimei", meaning: "em gái" },
+    { hanzi: "朋友", pinyin: "péngyou", meaning: "bạn" },
+    { hanzi: "位", pinyin: "wèi", meaning: "vị (lượng từ)" },
+    { hanzi: "什么", pinyin: "shénme", meaning: "gì, cái gì" }
+];
+
+let shuffled = [];
+let index = 0;
+let timer;
+
+function shuffleArray(arr) {
+    return arr.sort(() => Math.random() - 0.5);
+}
+
+function start() {
+    shuffled = shuffleArray([...words]);
+    index = 0;
+    nextWord();
+}
+
+function nextWord() {
+    if (index >= shuffled.length) {
+        $("#card").html("Hết 18 từ!");
+        return;
+    }
+
+    let current = shuffled[index];
+
+    // hiện nghĩa trước
+    $("#card").html(`<div>${current.meaning}</div>`);
+
+    clearTimeout(timer);
+
+    // sau 3s hiện đáp án
+    timer = setTimeout(() => {
+        $("#card").html(`
+            <div>${current.meaning}</div>
+            <div>${current.hanzi}</div>
+            <div class="pinyin">${current.pinyin}</div>
+        `);
+
+        // sau 1s chuyển từ (KHÔNG alert nữa)
+        timer = setTimeout(() => {
+            index++;
+            nextWord();
+        }, 8000);
+
+    }, 3000);
+}
+
+function reset() {
+    clearTimeout(timer);
+    shuffled = [];
+    index = 0;
+    $("#card").text("Bấm bắt đầu");
+}
+
+// gán sự kiện
+$("#startBtn").off("click").on("click", start);
+$("#resetBtn").off("click").on("click", reset);
+
+})();
+</script>

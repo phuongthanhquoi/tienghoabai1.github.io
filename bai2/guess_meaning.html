@@ -89,13 +89,16 @@ let words = [
     { hanzi: "什么", pinyin: "shénme", meaning: "gì, cái gì" }
 ];
 
-let index = 0;
-let timer1, timer2;
+let remainingWords = [];
+let timer1, timer2, timer3;
 let isRunning = false;
 
 function start() {
     clearAllTimers();
-    index = 0;
+
+    // copy danh sách từ gốc để random
+    remainingWords = [...words];
+
     isRunning = true;
     nextWord();
 }
@@ -103,15 +106,21 @@ function start() {
 function nextWord() {
     if (!isRunning) return;
 
-    if (index >= words.length) {
+    if (remainingWords.length === 0) {
         document.getElementById("card").innerHTML = `
             <div style="font-size:36px;">Hết!</div>
             <div class="meaning">Bạn đã luyện xong bài này</div>
         `;
+        isRunning = false;
         return;
     }
 
-    let current = words[index];
+    // lấy ngẫu nhiên 1 từ trong danh sách còn lại
+    let randomIndex = Math.floor(Math.random() * remainingWords.length);
+    let current = remainingWords[randomIndex];
+
+    // xóa từ đã hiện để không hiện lại nữa
+    remainingWords.splice(randomIndex, 1);
 
     // Bước 1: hiện chữ Hán
     document.getElementById("card").innerHTML = `
@@ -120,6 +129,8 @@ function nextWord() {
 
     // Bước 2: sau 3 giây hiện pinyin
     timer1 = setTimeout(() => {
+        if (!isRunning) return;
+
         document.getElementById("card").innerHTML = `
             <div>${current.hanzi}</div>
             <div class="pinyin">${current.pinyin}</div>
@@ -127,6 +138,8 @@ function nextWord() {
 
         // Bước 3: sau 2 giây hiện nghĩa
         timer2 = setTimeout(() => {
+            if (!isRunning) return;
+
             document.getElementById("card").innerHTML = `
                 <div>${current.hanzi}</div>
                 <div class="pinyin">${current.pinyin}</div>
@@ -134,8 +147,7 @@ function nextWord() {
             `;
 
             // Sang từ tiếp theo sau 2 giây nữa
-            setTimeout(() => {
-                index++;
+            timer3 = setTimeout(() => {
                 nextWord();
             }, 2000);
 
@@ -146,14 +158,17 @@ function nextWord() {
 
 function reset() {
     clearAllTimers();
-    index = 0;
+
+    remainingWords = [];
     isRunning = false;
+
     document.getElementById("card").innerHTML = `Bấm bắt đầu`;
 }
 
 function clearAllTimers() {
     clearTimeout(timer1);
     clearTimeout(timer2);
+    clearTimeout(timer3);
 }
 
 document.getElementById("startBtn").onclick = start;
